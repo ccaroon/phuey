@@ -10,9 +10,9 @@ setup(
         'rgbxy >= 0.5',
         'requests >= 2.26.0',
     ],
-    # entry_points={
-    #     'console_scripts': [
-    #         'phuey=phuey.main:cli',
-    #     ],
-    # },
+    entry_points={
+        'console_scripts': [
+            'phuey=phuey.main:cli',
+        ],
+    },
 )

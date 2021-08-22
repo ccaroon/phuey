@@ -12,8 +12,29 @@ class HueBridge:
         # self.client.debug(True)
 
     @classmethod
-    def create_user(cls):
-        pass
+    def create_user(cls, bridge_url, app_name, device_name, **kwargs):
+        """Creates a 'username' for use with Philip Hue REST API calls"""
+
+        client = RestClient('/api', {'host': bridge_url }, cls.error)
+        # client.debug(True)
+        # POST /api `{"devicetype":"<APP_NAME>#<DEVICE_NAME>"}`
+        data = {
+            'devicetype': F"{app_name}#{device_name}"
+        }
+
+        gen_client_key = kwargs.get('gen_client_key', False)
+        if gen_client_key:
+            data['generateclientkey'] = True
+
+        resp = client.post('/', data)
+
+        result = {
+            'username': resp.json()[0]['success']['username'],
+        }
+        if gen_client_key:
+            result['client_key'] = resp.json()[0]['success']['clientkey']
+
+        return (result)
 
     def get_light(self, name):
         light = None
@@ -36,7 +57,7 @@ class HueBridge:
     def __normalize_name(self, name):
         return re.sub("[^\w ]", '-', name)
 
-    def error(self, response):
+    def error(response):
         """Parse out the error message from the given REST response if any"""
 
         data = response.json()
@@ -44,7 +65,9 @@ class HueBridge:
             error_msg = None
             if 'error' in result:
                 error = result['error']
-                error_msg = F"Status Code: [{response.status_code}] | Reason: [{response.reason}]"
-                error_msg += F" | Description: [{error.get('description', '?????')}]"
+                error_msg = "Error - "
+                if response.status_code >= 300:
+                    error_msg = F"Status Code: [{response.status_code}] | Reason: [{response.reason}] | "
+                error_msg += F"Message: [{error.get('description', '?????')}]"
 
                 raise Exception(error_msg)

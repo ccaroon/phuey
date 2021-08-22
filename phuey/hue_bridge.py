@@ -7,7 +7,7 @@ class HueBridge:
         self.client = RestClient(
             F'/api/{token}',
             { 'host': host },
-            self.error
+            HueBridge.error
         )
         # self.client.debug(True)
 

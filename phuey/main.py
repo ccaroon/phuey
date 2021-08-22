@@ -1,5 +1,6 @@
 import argparse
 
+import phuey.version
 from phuey.hue_bridge import HueBridge
 
 #-------------------------------------------------------------------------------
@@ -32,8 +33,9 @@ def usage(args):
 #-------------------------------------------------------------------------------
 def cli():
     parser = argparse.ArgumentParser(
-        description='Philips Hue Utility'
+        description=F'Philips Hue Utility v{phuey.version.VERSION}'
     )
+    parser.add_argument('--version', '-v', action='version', version=phuey.version.VERSION)
     parser.set_defaults(func=usage, app=parser)
     subparsers = parser.add_subparsers()
 

@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## 0.0.4 - 2021-08-22
+* Added `--version` flag to CLI
+
 ## 0.0.3 - 2021-08-22
 * Fixed bug in HueBridge caused by changing the params to the `error` method
   on last commit.

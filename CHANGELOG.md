@@ -1,5 +1,14 @@
 # CHANGELOG
 
+## 0.0.5 - 2021-08-??
+* CLI re-org
+  - Each command is now a separate module in the new `cli` dir
+  - CLI now requires a config file. See `phuey init`
+* Added `init` command to CLI
+* Added `list-lights` command to CLI
+* Added `get_lights` method to HueBridge
+  - Update `get_light` to use `get_lights`
+
 ## 0.0.4 - 2021-08-22
 * Added `--version` flag to CLI
 

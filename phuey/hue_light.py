@@ -19,6 +19,7 @@ class HueLight:
             if fld in self.initial_state:
                 del self.initial_state[fld]
 
+    @property
     def name(self):
         return self.data['name']
 

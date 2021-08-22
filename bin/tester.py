@@ -9,7 +9,7 @@ def test_light(name):
     light = bridge.get_light(name)
 
     # light.on(False)
-    print(light.name())
+    print(light.name)
     print(light.on())
     print(light.color())
 

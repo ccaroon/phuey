@@ -1,8 +1,11 @@
 from phuey.hue_bridge import HueBridge
 #-------------------------------------------------------------------------------
-def create_username(args, config):
+def create_username(args, **kwargs):
     print("Please press the <Link Button> on the Hue Bridge now...")
     _ = input("Press Enter to Continue")
+
+    config = kwargs.get('config')
+
     result = HueBridge.create_user(
         config['host'],
         args.app_name,

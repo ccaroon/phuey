@@ -8,15 +8,16 @@ import phuey.version
 # Commands
 import phuey.cli.init
 import phuey.cli.create_username
-import phuey.cli.list_lights
+import phuey.cli.light
 
+from phuey.hue_bridge import HueBridge
 #-------------------------------------------------------------------------------
-def __usage(args, config):
+def __usage(args, **kwargs):
     args.app.print_help()
     print("\nSEE ALSO:")
     print("    * README.md")
     print("\nNOTES:")
-    print("    * A Work In-Progress...")
+    print("    * ...This is a Work-In-Progress...")
 #-------------------------------------------------------------------------------
 def __read_config():
     home_dir = os.getenv('HOME')
@@ -44,14 +45,16 @@ def cli():
     # Register Commands
     phuey.cli.init.register(subparsers)
     phuey.cli.create_username.register(subparsers)
-    phuey.cli.list_lights.register(subparsers)
+    phuey.cli.light.register(subparsers)
 
     args = parser.parse_args()
 
     # Read Config
+    bridge = None
     config = None
     if args.func != phuey.cli.init.init:
         config = __read_config()
+        bridge = HueBridge(config['host'], config['username'])
 
     # Execute the command
-    args.func(args, config)
+    args.func(args, config=config, bridge=bridge)

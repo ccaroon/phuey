@@ -1,7 +1,5 @@
 import os
 import yaml
-
-from phuey.hue_bridge import HueBridge
 #-------------------------------------------------------------------------------
 CONFIG_FILE_NAME = 'phuey.yml'
 DEFAULT_CONFIG = {
@@ -9,7 +7,7 @@ DEFAULT_CONFIG = {
     'username': '0xDeadbEEf'
 }
 #-------------------------------------------------------------------------------
-def init(args, config):
+def init(args, **kwargs):
     home_dir = os.getenv('HOME')
     config_path = os.getenv('XDG_CONFIG_HOME', F"{home_dir}/.config")
     config_file = F"{config_path}/{CONFIG_FILE_NAME}"

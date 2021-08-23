@@ -4,7 +4,7 @@ import phuey.version
 setup(
     name='phuey',
     version=phuey.version.VERSION,
-    packages=['phuey'],
+    packages=['phuey', 'phuey.cli'],
     package_dir={'phuey': 'phuey'},
     install_requires=[
         'rgbxy >= 0.5',

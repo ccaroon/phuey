@@ -37,22 +37,31 @@ class HueBridge:
         return (result)
 
     def get_light(self, name):
-        light = None
+        found_light = None
         light_name = self.__normalize_name(name)
 
-        resp = self.client.get('/lights')
+        all_lights = self.get_lights()
 
-        lights = resp.json()
-        for id, data in lights.items():
-            check_name = self.__normalize_name(data['name'])
+        for light in all_lights:
+            check_name = self.__normalize_name(light.name)
             if light_name == check_name:
-                light = HueLight(self, id, data)
+                found_light = light
                 break
 
-        if not light:
+        if not found_light:
             raise Exception(F"Light named '{name}' not found.")
 
-        return light
+        return found_light
+
+    def get_lights(self):
+        resp = self.client.get('/lights')
+        light_data = resp.json()
+
+        lights = []
+        for id, data in light_data.items():
+            lights.append(HueLight(self, id, data))
+
+        return lights
 
     def __normalize_name(self, name):
         return re.sub("[^\w ]", '-', name)

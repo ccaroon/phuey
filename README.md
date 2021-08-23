@@ -5,6 +5,32 @@ Wrapper around Philips Hue REST API
 
 Only does the things I currently need it to do.
 
+## Library
+```python
+from phuey.hue_bridge import HueBridge
+
+# Create a HueBridge instance
+host = "http://localhost"
+## See the `phuey` CLI for creating a username: `phuey create-username -h`
+username = "0xdeadbeef"
+bridge = HueBridge(host, username)
+
+# Get a Light
+light = bridge.get_light("MyLight")
+
+## Turn the light on
+light.on(True)
+
+## Set the light's color using RGB
+light.color((50,255,128))
+
+## Set the light's brightness 0 to 100%
+light.brightness(75)
+
+## Blink the light RED 5 times
+light.blink((255,0,0), 5)
+```
+
 ## CLI
 `phuey -h`
 

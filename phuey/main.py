@@ -3,12 +3,8 @@ import os
 import sys
 import yaml
 
+import phuey.cli
 import phuey.version
-
-# Commands
-import phuey.cli.admin
-import phuey.cli.config
-import phuey.cli.light
 
 from phuey.hue_bridge import HueBridge
 #-------------------------------------------------------------------------------
@@ -40,12 +36,10 @@ def cli():
     )
     parser.add_argument('--version', '-v', action='version', version=phuey.version.VERSION)
     parser.set_defaults(func=__usage, app=parser)
-    subparsers = parser.add_subparsers()
 
     # Register Commands
-    phuey.cli.admin.register(subparsers)
-    phuey.cli.config.register(subparsers)
-    phuey.cli.light.register(subparsers)
+    subparsers = parser.add_subparsers()
+    phuey.cli.register_commands(subparsers)
 
     args = parser.parse_args()
 

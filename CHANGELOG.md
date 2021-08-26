@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 0.0.6 - 2021-08-26?
+### CLI
+* Re-organize some CLI commands:
+  * `create-usename` ==> `admin create-username`
+  * `init` ==> `config init`
+
 ## 0.0.5 - 2021-08-23
 ### CLI
 * Each command is now a separate module in the new `cli` dir

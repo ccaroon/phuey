@@ -6,8 +6,8 @@ import yaml
 import phuey.version
 
 # Commands
+import phuey.cli.admin
 import phuey.cli.init
-import phuey.cli.create_username
 import phuey.cli.light
 
 from phuey.hue_bridge import HueBridge
@@ -43,8 +43,8 @@ def cli():
     subparsers = parser.add_subparsers()
 
     # Register Commands
+    phuey.cli.admin.register(subparsers)
     phuey.cli.init.register(subparsers)
-    phuey.cli.create_username.register(subparsers)
     phuey.cli.light.register(subparsers)
 
     args = parser.parse_args()

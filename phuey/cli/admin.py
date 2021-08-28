@@ -1,6 +1,10 @@
+import yaml
 from phuey.hue_bridge import HueBridge
 #-------------------------------------------------------------------------------
-def create_username(args, **kwargs):
+def admin(args, **kwargs):
+    args.cmd.print_help()
+#-------------------------------------------------------------------------------
+def cmd_create_username(args, **kwargs):
     print("Please press the <Link Button> on the Hue Bridge now...")
     _ = input("Press Enter to Continue")
 
@@ -24,17 +28,25 @@ https://account.meethue.com/apps and click the Deactive button on the relevant A
     """)
 #-------------------------------------------------------------------------------
 def register(subparsers):
-    # create_username
     command = subparsers.add_parser(
+        'admin',
+        help='Admin Tasks')
+    command.set_defaults(func=admin, cmd=command)
+
+    # Init Sub-commands
+    sub_commands = command.add_subparsers()
+
+    # create-username
+    create_user_cmd = sub_commands.add_parser(
         'create-username',
         help='Create a username for use with the Philips Hue REST API')
-    command.add_argument(
+    create_user_cmd.add_argument(
         "app_name", type=str,
         help="The name of the application that will be using the username.")
-    command.add_argument(
+    create_user_cmd.add_argument(
         "device_name", type=str,
         help="The name of the device the application runs on.")
-    command.add_argument(
+    create_user_cmd.add_argument(
         "--gen-client-key", "-k", action='store_true', default=False,
         help="Also generate a Client Key. Default: False")
-    command.set_defaults(func=create_username)
+    create_user_cmd.set_defaults(func=cmd_create_username)

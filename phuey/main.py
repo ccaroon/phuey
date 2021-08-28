@@ -3,12 +3,8 @@ import os
 import sys
 import yaml
 
+import phuey.cli
 import phuey.version
-
-# Commands
-import phuey.cli.init
-import phuey.cli.create_username
-import phuey.cli.light
 
 from phuey.hue_bridge import HueBridge
 #-------------------------------------------------------------------------------
@@ -29,7 +25,7 @@ def __read_config():
         with open(config_file, 'r') as file:
             data = yaml.load(file, Loader=yaml.SafeLoader)
     except FileNotFoundError:
-        print("Config File Not Found. Please run `phuey init` and try again.")
+        print("Config File Not Found. Please run `phuey config init` and try again.")
         sys.exit(1)
 
     return data
@@ -40,19 +36,17 @@ def cli():
     )
     parser.add_argument('--version', '-v', action='version', version=phuey.version.VERSION)
     parser.set_defaults(func=__usage, app=parser)
-    subparsers = parser.add_subparsers()
 
     # Register Commands
-    phuey.cli.init.register(subparsers)
-    phuey.cli.create_username.register(subparsers)
-    phuey.cli.light.register(subparsers)
+    subparsers = parser.add_subparsers()
+    phuey.cli.register_commands(subparsers)
 
     args = parser.parse_args()
 
     # Read Config
     bridge = None
     config = None
-    if args.func != phuey.cli.init.init:
+    if args.func != phuey.cli.config.cmd_init:
         config = __read_config()
         bridge = HueBridge(config['host'], config['username'])
 

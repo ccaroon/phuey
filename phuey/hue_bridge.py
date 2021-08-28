@@ -3,9 +3,9 @@ from phuey.rest_client import RestClient
 from phuey.hue_light import HueLight
 
 class HueBridge:
-    def __init__(self, host, token):
+    def __init__(self, host, username):
         self.client = RestClient(
-            F'/api/{token}',
+            F'/api/{username}',
             { 'host': host },
             HueBridge.error
         )

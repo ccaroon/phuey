@@ -1,6 +1,11 @@
 # CHANGELOG
 
-## 0.0.6 - 2021-08-26?
+## 2021-08-??
+No version increment.
+
+* Added unit tests.
+
+## 0.0.6 - 2021-08-28
 ### CLI
 * Re-organized some CLI commands:
   * `create-username` ==> `admin create-username`

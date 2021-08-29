@@ -1,6 +1,7 @@
-from faker import Faker
 import unittest
 import requests_mock
+
+import mock_bridge
 
 from phuey.hue_bridge import HueBridge
 from phuey.hue_light import HueLight
@@ -12,29 +13,9 @@ class TestHueBridge(unittest.TestCase):
             { 'success': { 'username': '0xdeadbeef' } }
         ]
 
-    def __fake_light_data(self, count=1):
-        light_data = {}
-        for i in range(0, count):
-            light_data[i] = {
-                'id': i,
-                'name': self.faker.word(),
-                'state': {
-                    'on': self.faker.boolean(),
-                    'xy': (
-                        self.faker.pyfloat(2,2,min_value=0.0,max_value=1.0),
-                        self.faker.pyfloat(2,2,min_value=0.0,max_value=1.0)
-                    ),
-                    'bri': self.faker.random_int(0,254),
-                    'colormode': 'xy'
-                }
-            }
-
-        return light_data
-
     def setUp(self):
         self.username = '0xDeadbeeF'
         self.bridge = HueBridge('http://192.168.24.007', self.username)
-        self.faker = Faker(['en_US'])
 
     def test_can_create_user(self, rmock):
         mock_json = self.CREATE_USER_JSON.copy()
@@ -64,7 +45,7 @@ class TestHueBridge(unittest.TestCase):
         self.assertEqual(result['client_key'], mock_json[0]['success']['clientkey'])
 
     def test_can_get_all_lights(self, rmock):
-        light_data = self.__fake_light_data(count=5)
+        light_data = mock_bridge.lights(count=5)
         rmock.register_uri('GET', F'/api/{self.username}/lights', json=light_data)
 
         lights = self.bridge.get_lights()
@@ -74,7 +55,7 @@ class TestHueBridge(unittest.TestCase):
 
 
     def test_can_get_single_light(self, rmock):
-        light_data = self.__fake_light_data(count=5)
+        light_data = mock_bridge.lights(count=5)
         rmock.register_uri('GET', F'/api/{self.username}/lights', json=light_data)
 
         a_light = light_data[0]
@@ -85,7 +66,7 @@ class TestHueBridge(unittest.TestCase):
         self.assertEqual(light.name, a_light['name'])
 
     def test_light_not_found(self, rmock):
-        light_data = self.__fake_light_data(count=1)
+        light_data = mock_bridge.lights(count=1)
         rmock.register_uri('GET', F'/api/{self.username}/lights', json=light_data)
 
         with self.assertRaisesRegex(Exception, F"Light named 'FooBarBang' not found"):
@@ -94,30 +75,12 @@ class TestHueBridge(unittest.TestCase):
     def test_error_handler(self, rmock):
         rmock.register_uri('GET', F'/api/{self.username}/lights', json=[
             {'error': {'description': 'The Philips Hue Bridge seems to be offline'}}
-        ])
+        ], status_code=404, reason='Not Found')
 
-        with self.assertRaisesRegex(Exception, 'Error - Message: \[The Philips Hue Bridge seems to be offline\]'):
+        with self.assertRaises(Exception) as cm:
             self.bridge.get_light('does-not-matter')
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-#
+        self.assertRegexpMatches(str(cm.exception), "Status Code: \[404\]")
+        self.assertRegexpMatches(str(cm.exception), "Reason: \[Not Found\]")
+        self.assertRegexpMatches(str(cm.exception), 'Error -')
+        self.assertRegexpMatches(str(cm.exception), 'Message: \[The Philips Hue Bridge seems to be offline\]')

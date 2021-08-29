@@ -40,7 +40,7 @@ class HueLight:
 
         if rgb:
             xy = self.CONVERTER.rgb_to_xy(rgb[0], rgb[1], rgb[2])
-            resp = self.__client.put(F"/lights/{self.id}/state", {
+            self.__client.put(F"/lights/{self.id}/state", {
                 'xy': xy,
                 'on': True
             })

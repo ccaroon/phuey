@@ -76,7 +76,7 @@ class HueBridge:
                 error = result['error']
                 error_msg = "Error - "
                 if response.status_code >= 300:
-                    error_msg = F"Status Code: [{response.status_code}] | Reason: [{response.reason}] | "
+                    error_msg += F"Status Code: [{response.status_code}] | Reason: [{response.reason}] | "
                 error_msg += F"Message: [{error.get('description', '?????')}]"
 
                 raise Exception(error_msg)

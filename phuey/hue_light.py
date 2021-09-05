@@ -26,6 +26,10 @@ class HueLight:
     def name(self):
         return self.__data['name']
 
+    @property
+    def data(self):
+        return self.__data
+
     def reload(self):
         """ Reload the light's info/state/etc """
         resp = self.__bridge.connection.get(F"/lights/{self.id}")

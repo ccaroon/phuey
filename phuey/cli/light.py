@@ -19,7 +19,12 @@ def cmd_get(args, **kwargs):
     if args.fields:
         fields = args.fields.split(',')
         for fld in fields:
-            value = light.data.get(fld)
+            value = light.data
+
+            parts = fld.split(':')
+            for p in parts:
+                    value = value.get(p)
+
             if isinstance(value, str):
                 print(value)
             else:

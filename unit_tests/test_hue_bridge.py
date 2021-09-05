@@ -17,7 +17,7 @@ class TestHueBridge(unittest.TestCase):
         self.username = '0xDeadbeeF'
         self.bridge = HueBridge('http://192.168.24.007', self.username)
 
-    def test_can_create_user(self, rmock):
+    def test_create_user(self, rmock):
         mock_json = self.CREATE_USER_JSON.copy()
         rmock.register_uri('POST', '/api/', json=mock_json)
         result = HueBridge.create_user(
@@ -28,7 +28,7 @@ class TestHueBridge(unittest.TestCase):
 
         self.assertEqual(result['username'], mock_json[0]['success']['username'])
 
-    def test_can_create_user_with_client_key(self, rmock):
+    def test_create_user_with_client_key(self, rmock):
         mock_json = self.CREATE_USER_JSON.copy()
         mock_json[0]['success']['clientkey'] = 'abcdefg123456789'
         rmock.register_uri('POST', '/api/', json=mock_json)
@@ -44,7 +44,7 @@ class TestHueBridge(unittest.TestCase):
         self.assertIsNotNone(result['client_key'])
         self.assertEqual(result['client_key'], mock_json[0]['success']['clientkey'])
 
-    def test_can_get_all_lights(self, rmock):
+    def test_get_all_lights(self, rmock):
         light_data = mock_bridge.lights(count=5)
         rmock.register_uri('GET', F'/api/{self.username}/lights', json=light_data)
 
@@ -54,7 +54,7 @@ class TestHueBridge(unittest.TestCase):
         self.assertIsInstance(lights[0], HueLight)
 
 
-    def test_can_get_single_light(self, rmock):
+    def test_get_single_light(self, rmock):
         light_data = mock_bridge.lights(count=5)
         rmock.register_uri('GET', F'/api/{self.username}/lights', json=light_data)
 

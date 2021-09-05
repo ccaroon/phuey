@@ -4,7 +4,7 @@ from phuey.hue_light import HueLight
 
 class HueBridge:
     def __init__(self, host, username):
-        self.client = RestClient(
+        self.__client = RestClient(
             F'/api/{username}',
             { 'host': host },
             HueBridge.error
@@ -36,6 +36,14 @@ class HueBridge:
 
         return (result)
 
+    @property
+    def url(self):
+        return self.__client.base_url()
+
+    @property
+    def connection(self):
+        return self.__client
+
     def get_light(self, name):
         found_light = None
         light_name = self.__normalize_name(name)
@@ -54,7 +62,7 @@ class HueBridge:
         return found_light
 
     def get_lights(self):
-        resp = self.client.get('/lights')
+        resp = self.__client.get('/lights')
         light_data = resp.json()
 
         lights = []

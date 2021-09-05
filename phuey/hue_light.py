@@ -5,49 +5,52 @@ class HueLight:
     CONVERTER = Converter(GamutC)
 
     def __init__(self, bridge, id, data={}):
-        self.bridge = bridge
-        self.__client = bridge.client
+        self.__bridge = bridge
 
-        self.id   = id
-        self.data = data
+        self.__id   = id
+        self.__data = data
         self.__set_initial_state()
 
     def __set_initial_state(self):
-        self.initial_state = self.data.get('state', {'on': False}).copy()
+        self.__initial_state = self.__data.get('state', {'on': False}).copy()
         # fields that are not modifyable
         for fld in ('colormode', 'effect', 'alert', 'mode', 'reachable'):
-            if fld in self.initial_state:
-                del self.initial_state[fld]
+            if fld in self.__initial_state:
+                del self.__initial_state[fld]
+
+    @property
+    def id(self):
+        return self.__id
 
     @property
     def name(self):
-        return self.data['name']
+        return self.__data['name']
 
     def reload(self):
-        """ Reload the lights state """
-        resp = self.__client.get(F"/lights/{self.id}")
+        """ Reload the light's info/state/etc """
+        resp = self.__bridge.connection.get(F"/lights/{self.id}")
 
-        self.data = resp.json()
+        self.__data = resp.json()
         self.__set_initial_state()
 
     def reset(self):
-        """ Reset the light to it's inital state """
-        resp = self.__client.put(F"/lights/{self.id}/state", self.initial_state)
-        self.data['state'] = self.initial_state
+        """ Reset the light to it's initial state """
+        _ = self.__bridge.connection.put(F"/lights/{self.id}/state", self.__initial_state)
+        self.__data['state'] = self.__initial_state
 
     def color(self, rgb = None):
         """ Get/Set Color """
 
         if rgb:
             xy = self.CONVERTER.rgb_to_xy(rgb[0], rgb[1], rgb[2])
-            self.__client.put(F"/lights/{self.id}/state", {
+            self.__bridge.connection.put(F"/lights/{self.id}/state", {
                 'xy': xy,
                 'on': True
             })
 
-            self.data['state']['xy'] = xy
+            self.__data['state']['xy'] = xy
         else:
-            xy = self.data['state']['xy']
+            xy = self.__data['state']['xy']
             return (self.CONVERTER.xy_to_rgb(xy[0], xy[1]))
 
     # percent: 0 to 100
@@ -56,25 +59,28 @@ class HueLight:
         if percent is not None:
             # translate percent to value between 0 & 254
             bri_value = int(254 * (percent/100))
-            resp = self.__client.put(F"/lights/{self.id}/state", {
+            resp = self.__bridge.connection.put(F"/lights/{self.id}/state", {
                 'bri': bri_value,
                 'on': True
             })
 
-            self.data['state']['bri'] = bri_value
+            self.__data['state']['bri'] = bri_value
         else:
-            return self.data['state']['bri']
+            # Value is 0 to 254, Convert to percentage
+            bri_percent = (self.__data['state']['bri'] * 100) / 254
+
+            return round(bri_percent)
 
     def on(self, value=None):
         """ Get/Set Current ON state """
         if value in (True, False):
-            resp = self.__client.put(F"/lights/{self.id}/state", {
+            resp = self.__bridge.connection.put(F"/lights/{self.id}/state", {
                 'on': value
             })
 
-            self.data['state']['on'] = value
+            self.__data['state']['on'] = value
         else:
-            return self.data['state']['on']
+            return self.__data['state']['on']
 
     def blink(self, color, count=3):
         self.on(True)

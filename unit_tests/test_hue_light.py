@@ -18,6 +18,9 @@ class TestHueLight(unittest.TestCase):
         self.light_data = light_data[0]
         self.light = HueLight(self.bridge, light_data[0]['id'], light_data[0])
 
+    def test_get_data(self, rmock):
+        self.assertDictEqual(self.light_data, self.light.data)
+
     def test_get_name(self, rmock):
         self.assertEqual(self.light.name, self.light_data['name'])
 

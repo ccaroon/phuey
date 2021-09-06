@@ -1,9 +1,13 @@
 # CHANGELOG
 
-## 2021-08-??
-No version increment.
-
-* Added unit tests.
+## 0.0.7 - 2021-09-06
+* Added unit tests. Code coverage 46% overall.
+  - Still need to unit test the CLI modules.
+* `phuey light get ...` can now be given sub-fields with the `-f` flag
+  - E.g. `phue light get MyLight -f state:on,state:bri`
+* Better data encapsulation
+* Fixed bug where "get" for HueLight#brightness was returning the raw value instead of a percentage.
+* Use the verbage 'username' instead of 'token' in HueBridge.
 
 ## 0.0.6 - 2021-08-28
 ### CLI

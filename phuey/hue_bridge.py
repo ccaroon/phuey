@@ -3,9 +3,9 @@ from phuey.rest_client import RestClient
 from phuey.hue_light import HueLight
 
 class HueBridge:
-    def __init__(self, host, token):
-        self.client = RestClient(
-            F'/api/{token}',
+    def __init__(self, host, username):
+        self.__client = RestClient(
+            F'/api/{username}',
             { 'host': host },
             HueBridge.error
         )
@@ -36,6 +36,14 @@ class HueBridge:
 
         return (result)
 
+    @property
+    def url(self):
+        return self.__client.base_url()
+
+    @property
+    def connection(self):
+        return self.__client
+
     def get_light(self, name):
         found_light = None
         light_name = self.__normalize_name(name)
@@ -54,7 +62,7 @@ class HueBridge:
         return found_light
 
     def get_lights(self):
-        resp = self.client.get('/lights')
+        resp = self.__client.get('/lights')
         light_data = resp.json()
 
         lights = []
@@ -76,7 +84,7 @@ class HueBridge:
                 error = result['error']
                 error_msg = "Error - "
                 if response.status_code >= 300:
-                    error_msg = F"Status Code: [{response.status_code}] | Reason: [{response.reason}] | "
+                    error_msg += F"Status Code: [{response.status_code}] | Reason: [{response.reason}] | "
                 error_msg += F"Message: [{error.get('description', '?????')}]"
 
                 raise Exception(error_msg)

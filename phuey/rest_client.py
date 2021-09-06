@@ -25,12 +25,9 @@ class RestClient:
         if self.__debug:
             self.__debug_print_req("GET", F"{full_url}?{qs}", self.__headers(), "")
 
-        try:
-            resp = requests.get(full_url, auth=self.__auth(), headers=self.__headers(), verify=False, params=qs)
-            self.check_error(resp)
-            return resp
-        except Exception as e:
-            return e
+        resp = requests.get(full_url, auth=self.__auth(), headers=self.__headers(), verify=False, params=qs)
+        self.check_error(resp)
+        return resp
 
     def post(self, url, body={}):
         full_url = F"{self.base_url()}{url}"
